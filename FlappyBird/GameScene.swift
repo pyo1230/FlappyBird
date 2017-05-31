@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import AudioToolbox
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -71,7 +72,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bestScoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         
         let bestScore = userDefaults.integer(forKey: "BEST")
-        scoreLabelNode.text = "Best Score:\(bestScore)"
+        bestScoreLabelNode.text = "Best Score:\(bestScore)"
         self.addChild(bestScoreLabelNode)
         
         itemScore = 0
@@ -115,10 +116,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             createItem.physicsBody = SKPhysicsBody(rectangleOf: itemTexture.size())
             createItem.physicsBody?.categoryBitMask = self.itemCategory
             
+            createItem.physicsBody?.isDynamic = false
+            
+            item.addChild(createItem)
+            
             //            衝突時に消す処理
             
             let scoreNode = SKNode()
-            scoreNode.position = CGPoint(x: createItem.size.width + self.bird.size.width / 2, y: self.frame.size.height / 2.0)
+            scoreNode.position = CGPoint(x: createItem.size.width + self.bird.size.width / 2, y: self.frame.height / 2.0)
             scoreNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: createItem.size.width, height: self.frame.size.height))
             scoreNode.physicsBody?.isDynamic = false
             scoreNode.physicsBody?.categoryBitMask = self.itemScoreCategory
@@ -178,12 +183,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             score += 1
             scoreLabelNode.text = "Score:\(score)"
             
-            if (contact.bodyA.categoryBitMask & itemScoreCategory) == itemScoreCategory || (contact.bodyB.categoryBitMask & itemScoreCategory) == itemScoreCategory {
-                print("ItemScoreUp")
-                itemScore += 1
-                itemScoreLabelNode.text = "Item Score:\(itemScore)"
-            }
-            
             var bestScore = userDefaults.integer(forKey: "BEST")
             if score > bestScore {
                 bestScore = score
@@ -202,6 +201,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bird.run(roll, completion:{
                 self.bird.speed = 0
             })
+        }
+        if (contact.bodyA.categoryBitMask & itemScoreCategory) == itemScoreCategory || (contact.bodyB.categoryBitMask & itemScoreCategory) == itemScoreCategory {
+            print("ItemScoreUp")
+            itemScore += 1
+            itemScoreLabelNode.text = "Item Score:\(itemScore)"
+            AudioServicesPlaySystemSound(1000)
         }
     }
     
