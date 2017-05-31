@@ -202,11 +202,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.bird.speed = 0
             })
         }
-        if (contact.bodyA.categoryBitMask & itemScoreCategory) == itemScoreCategory || (contact.bodyB.categoryBitMask & itemScoreCategory) == itemScoreCategory {
+        if (contact.bodyA.categoryBitMask & itemCategory) == itemCategory || (contact.bodyB.categoryBitMask & itemCategory) == itemCategory {
             print("ItemScoreUp")
             itemScore += 1
             itemScoreLabelNode.text = "Item Score:\(itemScore)"
             AudioServicesPlaySystemSound(1000)
+            if contact.bodyA.categoryBitMask & itemCategory == itemCategory {
+                contact.bodyA.node!.removeFromParent()
+            } else if contact.bodyB.categoryBitMask & itemCategory == itemCategory {
+                contact.bodyB.node!.removeFromParent()
+            }
         }
     }
     
