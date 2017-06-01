@@ -118,10 +118,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             createItem.physicsBody?.isDynamic = false
             
-            item.addChild(createItem)
-            
-            //            衝突時に消す処理
-            
             let scoreNode = SKNode()
             scoreNode.position = CGPoint(x: createItem.size.width + self.bird.size.width / 2, y: self.frame.height / 2.0)
             scoreNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: createItem.size.width, height: self.frame.size.height))
